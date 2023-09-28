@@ -95,20 +95,34 @@ Required software:
 * How to build
 
 ```shell
-docker build -t python-app .
+docker build -t app-python .
 ```
 
 * How to pull
 
 ```shell
-docker pull quiner/python-app:1.0.0
+docker pull quiner/app-python:latest
 ```
 
 * How to run
 
 ```shell
-docker run -d --env-file fastapi.env -p 8080:8080 python-app
+docker run -d --env-file fastapi.env -p 8080:8080 app-python
 ```
+
+### Unit Tests
+```shell
+pytest tests/
+```
+
+## CI workflow
+* checkout: clones the repository to the GitHub Actions runner
+* set up Python: initializes the Python 3.10 env
+* install dependencies: installs the necessary Python packages
+* linting: apply `black` linter
+* tests: run unit tests using `pytest`
+* vulnerability check: scan for vulnerabilities uses Snyk
+* docker: login to DockerHub, build Docker image using build-cache, push to DockerHub
 
 <!-- USAGE EXAMPLES -->
 ## Usage

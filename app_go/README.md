@@ -87,20 +87,36 @@ Required software:
 * How to build
 
 ```shell
-docker build -t go-app .
+docker build -t app-go .
 ```
 
 * How to pull
 
 ```shell
-docker pull quiner/go-app:1.0.0
+docker pull quiner/app-go:latest
 ```
 
 * How to run
 
 ```shell
-docker run -d --env-file go.env -p 8070:8070 go-app
+docker run -d --env-file go.env -p 8070:8070 app-go
 ```
+
+### Unit Tests
+```shell
+cd src/
+go test tests/integration/*
+```
+
+## CI workflow
+* checkout: clones the repository to the GitHub Actions runner
+* set up go-lang: initializes the go-lang '1.21.0'
+* build: build go application
+* linting: apply `fmt` linter
+* tests: run tests using `go test`
+* vulnerability check: scan for vulnerabilities uses Snyk
+* docker: login to DockerHub, build Docker image using build-cache, push to DockerHub
+
 
 <!-- USAGE EXAMPLES -->
 ## Usage
