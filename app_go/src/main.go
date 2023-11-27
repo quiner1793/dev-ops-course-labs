@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/quiner1793/dev-ops-course-labs/config"
 	"github.com/quiner1793/dev-ops-course-labs/middleware"
 	"github.com/quiner1793/dev-ops-course-labs/routes"
@@ -16,6 +17,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.Handle("/time", middleware.Logging(routes.MoscowTime()))
+	mux.Handle("/healthcheck", middleware.Logging(routes.HealthCheck()))
+	mux.Handle("/metrics", middleware.Logging(promhttp.Handler()))
 
 	addr := fmt.Sprintf("%s:%s", cfg.ServerHost, cfg.ServerPort)
 

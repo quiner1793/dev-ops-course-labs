@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from src.time_api.time_router import time_api_router
 
@@ -21,4 +23,17 @@ app = FastAPI(
     },
 )
 
+instrumentator = Instrumentator().instrument(app)
+
+
+@app.on_event('startup')
+async def startup():
+    instrumentator.expose(app)
+
+
 app.include_router(time_api_router)
+
+
+@app.get("/healthcheck")
+async def healthcheck():
+    return JSONResponse(content={"message": "OK"}, status_code=200)
