@@ -1,5 +1,9 @@
 # Lab 10: Introduction to Helm
 
+## Overview
+
+In this lab, you will become familiar with Helm, set up a local development environment, and generate manifests for your application.
+
 ## Task 1: Helm Setup and Chart Creation
 
 **6 Points:**

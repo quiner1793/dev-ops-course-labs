@@ -1,5 +1,9 @@
 # Lab 9: Introduction to Kubernetes
 
+## Overview
+
+In this lab, you will explore Kubernetes, set up a local development environment, and create manifests for your application.
+
 ## Task 1: Kubernetes Setup and Basic Deployment
 
 **6 Points:**
