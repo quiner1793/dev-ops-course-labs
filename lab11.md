@@ -8,8 +8,6 @@ In this lab, you will learn how to manage sensitive data, such as passwords, tok
 
 **6 Points:**
 
-In this lab, you will learn how to manage sensitive data, such as passwords, tokens, or keys, within Kubernetes. Additionally, you will configure CPU and memory limits for your application.
-
 1. Create a Secret Using `kubectl`:
    - Learn about Kubernetes Secrets and create a secret using the `kubectl` command:
      - [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)

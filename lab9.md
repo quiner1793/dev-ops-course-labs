@@ -8,8 +8,6 @@ In this lab, you will explore Kubernetes, set up a local development environment
 
 **6 Points:**
 
-In this lab, you will explore Kubernetes, set up a local development environment, and create manifests for your application.
-
 1. Learn About Kubernetes:
    - Begin by studying the fundamentals of Kubernetes:
      - [What is Kubernetes](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)
