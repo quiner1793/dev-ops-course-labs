@@ -8,6 +8,8 @@ In this lab, you will become familiar with Helm, set up a local development envi
 
 **6 Points:**
 
+In this lab, you will become familiar with Helm, set up a local development environment, and generate manifests for your application.
+
 1. Learn About Helm:
    - Begin by exploring the architecture and concepts of Helm:
      - [Helm Architecture](https://helm.sh/docs/topics/architecture/)
