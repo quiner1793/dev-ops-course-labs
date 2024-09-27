@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ include "python-app.fullname" . }}
+  name: {{ include "go-app.fullname" . }}
   labels:
     {{- include "mylibchart.labels" . | indent 4 }}
 spec:
+  podManagementPolicy: Parallel
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
@@ -24,7 +25,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "python-app.serviceAccountName" . }}
+      serviceAccountName: {{ include "go-app.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -37,21 +38,16 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          env:
-            - name: MY_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: credentials
-                  key: password
-            {{ include "python-app.pythonEnvs" . | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /healthcheck
-              port: 8080
+              port: 8070
           readinessProbe:
             httpGet:
               path: /healthcheck
-              port: 8080
+              port: 8070
+          env:
+          {{ include "go-app.goEnvs" . | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
@@ -74,3 +70,11 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.vct.name }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.vct.storage }}

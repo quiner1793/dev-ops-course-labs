@@ -1,16 +1,17 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ include "go-app.fullname" . }}
+  name: {{ include "python-app.fullname" . }}
   labels:
-    {{- include "mylibchart.labels" . | indent 4 }}
+    {{- include "mylibchart.labels" . | nindent 4 }}
 spec:
+  podManagementPolicy: Parallel
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "mylibchart.labels" . | indent 6 }}
+      {{- include "mylibchart.labels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +19,16 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "mylibchart.labels" . | indent 8 }}
+        {{- include "mylibchart.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "go-app.serviceAccountName" . }}
+      serviceAccountName: {{ include "python-app.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -33,6 +37,18 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: password
+            - name: CONFIG_MAP_VAR
+              valueFrom:
+                configMapKeyRef:
+                  name: python-app-configmap
+                  key: env-var
+                    {{ include "python-app.pythonEnvs" . | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -40,13 +56,11 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthcheck
-              port: 8070
+              port: 8080
           readinessProbe:
             httpGet:
               path: /healthcheck
-              port: 8070
-          env:
-          {{ include "go-app.goEnvs" . | nindent 12 }}
+              port: 8080
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
@@ -69,3 +83,11 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.vct.name }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.vct.storage }}
